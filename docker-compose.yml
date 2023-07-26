@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:5.0.2
+    restart: unless-stopped
+    env_file: ./.env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$MONGODB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$MONGODB_PASSWORD
+    ports:
+      - $MONGODB_LOCAL_PORT:$MONGODB_DOCKER_PORT
+    volumes:
+      - db:/data/db
+  
+  backend:
+    depends_on:
+      - mongodb
+    build:
+      context: back
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $NEST_LOCAL_PORT:$NEST_DOCKER_PORT
+    volumes:
+      - ./back:/back
+       - /back/node_modules/bcrypt
+       - /back/dist
+    working_dir: /back
+    environment:
+      - DB_HOST=$DB_HOST
+      - DB_USER=$DB_USER
+      - DB_PASSWORD=$DB_PASSWORD
+      - DB_NAME=$DB_NAME
+      - DB_PORT=$DB_PORT
+    stdin_open: true
+    tty: true
+  
+  frontend:
+    container_name: front
+    depends_on:
+      - backend
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    volumes:
+      - ./front/src:/front/src
+      - ./front/public:/front/public
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $FRONT_LOCAL_PORT:$FRONT_DOCKER_PORT
+    
+volumes:
+  db:

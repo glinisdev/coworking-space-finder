@@ -1,0 +1,5 @@
+export { ImageModule } from './image.module'
+export { ImageDocument, ImageSchema } from './image.schema'
+export { IMAGE_MODEL_NAME } from './image.constants'
+export { ImageService } from './image.service'
+export * from './types'

@@ -1,0 +1,5 @@
+export { PlaceModule } from './place.module'
+export { PlaceDocument, PlaceSchema } from './place.schema'
+export { PLACE_MODEL_NAME } from './place.constants'
+export { PlaceService } from './place.service'
+export * from './types'
